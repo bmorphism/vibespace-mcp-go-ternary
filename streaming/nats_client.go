@@ -109,6 +109,9 @@ func NewNATSClientWithStreamID(url string, streamID string) *NATSClient {
 	return client
 }
 
+// Variable to hold the nats.Connect function for testing purposes
+var natsConnect = nats.Connect
+
 // Connect establishes a connection to the NATS server
 func (c *NATSClient) Connect() error {
 	c.mu.Lock()
@@ -128,7 +131,7 @@ func (c *NATSClient) Connect() error {
 	c.lastConnectTime = time.Now()
 
 	var err error
-	c.conn, err = nats.Connect(c.url,
+	c.conn, err = natsConnect(c.url,
 		nats.RetryOnFailedConnect(true),
 		nats.MaxReconnects(-1),            // Unlimited reconnect attempts
 		nats.ReconnectWait(2*time.Second), // Wait 2 seconds between reconnect attempts

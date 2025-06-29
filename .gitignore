@@ -1,0 +1,4 @@
+# Coverage files
+*.out
+*.html
+coverage*
