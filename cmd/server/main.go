@@ -60,7 +60,8 @@ func main() {
 	mcpServer.AddTool(startStreamingTool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		// Convert JSON-RPC request to our internal format
 		interval := 0
-		if intervalVal, ok := req.Params.Arguments["interval"]; ok {
+		args := req.GetArguments()
+		if intervalVal, ok := args["interval"]; ok {
 			if intervalFloat, ok := intervalVal.(float64); ok {
 				interval = int(intervalFloat)
 			}
@@ -132,8 +133,9 @@ func main() {
 	})
 	mcpServer.AddTool(streamWorldTool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		// Extract arguments
-		worldID, _ := req.Params.Arguments["worldId"].(string)
-		userID, _ := req.Params.Arguments["userId"].(string)
+		args := req.GetArguments()
+		worldID, _ := args["worldId"].(string)
+		userID, _ := args["userId"].(string)
 		
 		// Create request
 		streamReq := &streaming.StreamWorldRequest{
@@ -142,7 +144,7 @@ func main() {
 		}
 		
 		// Check for sharing settings
-		if sharingMap, ok := req.Params.Arguments["sharing"].(map[string]interface{}); ok {
+		if sharingMap, ok := args["sharing"].(map[string]interface{}); ok {
 			sharing := &streaming.SharingRequest{}
 			
 			// Extract sharing fields
@@ -190,24 +192,25 @@ func main() {
 	mcpServer.AddTool(updateConfigTool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		// Extract arguments
 		config := &streaming.UpdateConfigRequest{}
+		args := req.GetArguments()
 		
-		if natsHost, ok := req.Params.Arguments["natsHost"].(string); ok {
+		if natsHost, ok := args["natsHost"].(string); ok {
 			config.NATSHost = natsHost
 		}
 		
-		if natsPort, ok := req.Params.Arguments["natsPort"].(float64); ok {
+		if natsPort, ok := args["natsPort"].(float64); ok {
 			config.NATSPort = int(natsPort)
 		}
 		
-		if natsURL, ok := req.Params.Arguments["natsUrl"].(string); ok {
+		if natsURL, ok := args["natsUrl"].(string); ok {
 			config.NATSUrl = natsURL
 		}
 		
-		if streamID, ok := req.Params.Arguments["streamId"].(string); ok {
+		if streamID, ok := args["streamId"].(string); ok {
 			config.StreamID = streamID
 		}
 		
-		if streamInterval, ok := req.Params.Arguments["streamInterval"].(float64); ok {
+		if streamInterval, ok := args["streamInterval"].(float64); ok {
 			config.StreamInterval = int(streamInterval)
 		}
 		
