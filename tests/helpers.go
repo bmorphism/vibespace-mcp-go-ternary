@@ -28,13 +28,14 @@ var dynamicResources = struct {
 
 // Custom JSON-RPC implementation for the server handler
 func handleCustomImplementation(ctx context.Context, method string, reqID interface{}, params map[string]interface{}) interface{} {
+	mcpReqID := mcp.NewRequestId(reqID)
 	switch method {
 	case methodResourceRead:
 		// Handle resource read requests
 		uri, ok := params["uri"].(string)
 		if !ok {
 			return mcp.NewJSONRPCError(
-				reqID,
+				mcpReqID,
 				-32602,
 				"Invalid params: uri is required",
 				nil,
@@ -92,7 +93,7 @@ func handleCustomImplementation(ctx context.Context, method string, reqID interf
 					text = `{"id": "calm-clarity", "name": "Calm Clarity", "description": "Peaceful and serene", "energy": 0.3, "mood": "calm", "colors": ["#065F46", "#34D399", "#A7F3D0"]}`
 				default:
 					return mcp.NewJSONRPCError(
-						reqID,
+						mcpReqID,
 						-32602,
 						fmt.Sprintf("Vibe not found: %s", vibeID),
 						nil,
@@ -171,7 +172,7 @@ func handleCustomImplementation(ctx context.Context, method string, reqID interf
 						text = `{"id": "energetic-spark", "name": "Energetic Spark", "description": "High energy vibes", "energy": 0.9, "mood": "energetic", "colors": ["#DC2626", "#F87171", "#FECACA"]}`
 					default:
 						return mcp.NewJSONRPCError(
-							reqID,
+							mcpReqID,
 							-32602,
 							fmt.Sprintf("World not found: %s", worldID),
 							nil,
@@ -196,7 +197,7 @@ func handleCustomImplementation(ctx context.Context, method string, reqID interf
 						text = `{"id": "hybrid-studio", "name": "Hybrid Creative Studio", "description": "Combined physical and virtual creative space", "type": "HYBRID", "location": "Studio 5 + https://studio.example.com", "currentVibe": "energetic-spark", "features": ["AR overlays", "digital whiteboard", "spatial audio"]}`
 					default:
 						return mcp.NewJSONRPCError(
-							reqID,
+							mcpReqID,
 							-32602,
 							fmt.Sprintf("World not found: %s", worldID),
 							nil,
@@ -212,7 +213,7 @@ func handleCustomImplementation(ctx context.Context, method string, reqID interf
 		// Create a read response with the appropriate content
 		return mcp.JSONRPCResponse{
 			JSONRPC: mcp.JSONRPC_VERSION,
-			ID:      reqID,
+			ID:      mcpReqID,
 			Result: mcp.ReadResourceResult{
 				Contents: []mcp.ResourceContents{
 					mcp.TextResourceContents{
@@ -229,7 +230,7 @@ func handleCustomImplementation(ctx context.Context, method string, reqID interf
 		name, ok := params["name"].(string)
 		if !ok {
 			return mcp.NewJSONRPCError(
-				reqID,
+				mcpReqID,
 				-32602,
 				"Invalid params: name is required",
 				nil,
@@ -680,7 +681,7 @@ func handleCustomImplementation(ctx context.Context, method string, reqID interf
 		// Create the tool response
 		return mcp.JSONRPCResponse{
 			JSONRPC: mcp.JSONRPC_VERSION,
-			ID:      reqID,
+			ID:      mcpReqID,
 			Result: mcp.CallToolResult{
 				IsError: isError,
 				Content: []mcp.Content{
@@ -694,7 +695,7 @@ func handleCustomImplementation(ctx context.Context, method string, reqID interf
 
 	// Method not supported
 	return mcp.NewJSONRPCError(
-		reqID,
+		mcpReqID,
 		-32601,
 		fmt.Sprintf("Method not found: %s", method),
 		nil,
