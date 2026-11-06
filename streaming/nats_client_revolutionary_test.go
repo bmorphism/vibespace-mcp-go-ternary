@@ -3,8 +3,6 @@ package streaming
 import (
 	"testing"
 	"time"
-
-	"github.com/nats-io/nats.go"
 )
 
 // TestConnectFullRevolutionary uses advanced techniques to test the Connect method
@@ -14,9 +12,6 @@ func TestConnectFullRevolutionary(t *testing.T) {
 	// Skip for now since we've already got good coverage with other tests
 	t.Skip("Skipping revolutionary test as it's unstable")
 }
-
-// Variable to hold the original nats.Connect function
-var natsConnect = nats.Connect
 
 // mockNatsConn is a minimal mock for NatsConnection interface
 type mockNatsConn struct {
